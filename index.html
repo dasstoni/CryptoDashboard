@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoAnalytica - Ultimate Crypto Market Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">CryptoAnalytica</h1>
+                <div class="header-controls">
+                    <button class="btn btn--secondary btn--sm" id="themeToggle">🌙</button>
+                    <div class="alert-indicator" id="alertIndicator">
+                        <span class="alert-count" id="alertCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-tab" data-tab="technical">Technical Analysis</button>
+                <button class="nav-tab" data-tab="market">Market Analysis</button>
+                <button class="nav-tab" data-tab="research">Research</button>
+                <button class="nav-tab" data-tab="alerts">Alerts</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <section class="tab-content active" id="dashboard">
+                <div class="dashboard-grid">
+                    <!-- Portfolio Management -->
+                    <div class="card portfolio-section">
+                        <div class="card__header">
+                            <h2>Portfolio Management</h2>
+                            <button class="btn btn--secondary btn--sm" id="addHoldingBtn">Add Holding</button>
+                        </div>
+                        <div class="card__body">
+                            <div class="portfolio-summary">
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total Value</span>
+                                    <span class="stat-value" id="totalValue">$0</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Total ROI</span>
+                                    <span class="stat-value" id="totalROI">0%</span>
+                                </div>
+                                <div class="summary-stat">
+                                    <span class="stat-label">Holdings</span>
+                                    <span class="stat-value" id="holdingsCount">0</span>
+                                </div>
+                            </div>
+                            <div class="holdings-list" id="holdingsList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Market Overview -->
+                    <div class="card market-overview">
+                        <div class="card__header">
+                            <h2>Market Overview</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="market-metrics">
+                                <div class="metric">
+                                    <span class="metric-label">Total Market Cap</span>
+                                    <span class="metric-value" id="totalMarketCap">$3.1T</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">BTC Dominance</span>
+                                    <span class="metric-value" id="btcDominance">58.2%</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">Fear & Greed</span>
+                                    <span class="metric-value" id="fearGreed">42</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-label">DeFi TVL</span>
+                                    <span class="metric-value" id="defiTvl">$97B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Price View -->
+                    <div class="card price-view">
+                        <div class="card__header">
+                            <h2>Top Holdings</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="price-list" id="priceList"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Analysis Tab -->
+            <section class="tab-content" id="technical">
+                <div class="technical-grid">
+                    <div class="card chart-section">
+                        <div class="card__header">
+                            <h2>Price Chart & Indicators</h2>
+                            <select class="form-control" id="chartSymbol">
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="ADA">Cardano (ADA)</option>
+                            </select>
+                        </div>
+                        <div class="card__body">
+                            <div class="chart-container" style="position: relative; height: 400px;">
+                                <canvas id="priceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card indicators-section">
+                        <div class="card__header">
+                            <h2>Technical Indicators</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="indicators-grid">
+                                <div class="indicator">
+                                    <span class="indicator-label">RSI (14)</span>
+                                    <div class="indicator-value-container">
+                                        <span class="indicator-value" id="rsiValue">45.2</span>
+                                        <div class="rsi-bar">
+                                            <div class="rsi-fill" id="rsiFill"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="indicator">
+                                    <span class="indicator-label">MACD</span>
+                                    <span class="indicator-value" id="macdValue">-850</span>
+                                </div>
+                                <div class="indicator">
+                                    <span class="indicator-label">MA 20</span>
+                                    <span class="indicator-value" id="ma20Value">$118,200</span>
+                                </div>
+                                <div class="indicator">
+                                    <span class="indicator-label">MA 50</span>
+                                    <span class="indicator-value" id="ma50Value">$113,400</span>
+                                </div>
+                                <div class="indicator">
+                                    <span class="indicator-label">MA 200</span>
+                                    <span class="indicator-value" id="ma200Value">$105,800</span>
+                                </div>
+                                <div class="indicator">
+                                    <span class="indicator-label">Volume 24h</span>
+                                    <span class="indicator-value" id="volumeValue">$28.5B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Market Analysis Tab -->
+            <section class="tab-content" id="market">
+                <div class="market-analysis-grid">
+                    <div class="card wyckoff-analysis">
+                        <div class="card__header">
+                            <h2>Wyckoff Market Cycle Analysis</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="wyckoff-phases">
+                                <div class="phase-indicator">
+                                    <h3>Current Phase</h3>
+                                    <span class="phase-name" id="wyckoffPhase">Accumulation</span>
+                                    <p class="phase-description" id="wyckoffDescription">Smart money accumulating, sideways price action with low volume</p>
+                                </div>
+                                <div class="market-structure">
+                                    <h3>Market Structure</h3>
+                                    <div class="structure-items">
+                                        <div class="structure-item">
+                                            <span class="structure-label">Trend Direction</span>
+                                            <span class="structure-value" id="trendDirection">Neutral</span>
+                                        </div>
+                                        <div class="structure-item">
+                                            <span class="structure-label">Support Level</span>
+                                            <span class="structure-value" id="supportLevel">$105,800</span>
+                                        </div>
+                                        <div class="structure-item">
+                                            <span class="structure-label">Resistance Level</span>
+                                            <span class="structure-value" id="resistanceLevel">$125,000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card elliott-gann">
+                        <div class="card__header">
+                            <h2>Elliott Wave & Gann Analysis</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="analysis-sections">
+                                <div class="elliott-section">
+                                    <h3>Elliott Wave Count</h3>
+                                    <span class="wave-count" id="elliottWave">Wave 4 Correction</span>
+                                    <p class="wave-description" id="waveDescription">Corrective wave in progress, expect completion near 38.2% Fibonacci level</p>
+                                </div>
+                                <div class="gann-section">
+                                    <h3>Gann Time/Price Squares</h3>
+                                    <div class="gann-levels">
+                                        <div class="gann-item">
+                                            <span class="gann-label">Next Time Cycle</span>
+                                            <span class="gann-value">March 2025</span>
+                                        </div>
+                                        <div class="gann-item">
+                                            <span class="gann-label">Price Square</span>
+                                            <span class="gann-value">$144,000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card onchain-analysis">
+                        <div class="card__header">
+                            <h2>On-Chain Analytics</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="onchain-metrics">
+                                <div class="onchain-metric">
+                                    <span class="metric-label">Whale Activity</span>
+                                    <span class="metric-value" id="whaleActivity">High Accumulation</span>
+                                </div>
+                                <div class="onchain-metric">
+                                    <span class="metric-label">Exchange Flows</span>
+                                    <span class="metric-value" id="exchangeFlow">Net Outflows: 2,400 BTC</span>
+                                </div>
+                                <div class="onchain-metric">
+                                    <span class="metric-label">Active Addresses</span>
+                                    <span class="metric-value">1.25M</span>
+                                </div>
+                                <div class="onchain-metric">
+                                    <span class="metric-label">Transaction Volume</span>
+                                    <span class="metric-value">$45B</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research Tab -->
+            <section class="tab-content" id="research">
+                <div class="research-grid">
+                    <div class="card research-input">
+                        <div class="card__header">
+                            <h2>Crypto Research Tool</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="form-group">
+                                <label class="form-label">Enter Crypto Symbol</label>
+                                <div class="search-container">
+                                    <input type="text" class="form-control" id="researchSymbol" placeholder="e.g., BTC, ETH, ADA">
+                                    <button class="btn btn--primary" id="researchBtn">Research</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card project-info" id="projectInfo" style="display: none;">
+                        <div class="card__header">
+                            <h2 id="projectName">Project Information</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="project-details">
+                                <div class="project-section">
+                                    <h3>Description</h3>
+                                    <p id="projectDescription"></p>
+                                </div>
+                                <div class="project-section">
+                                    <h3>Key Metrics</h3>
+                                    <div class="key-metrics">
+                                        <div class="key-metric">
+                                            <span class="metric-label">Current Price</span>
+                                            <span class="metric-value" id="researchPrice"></span>
+                                        </div>
+                                        <div class="key-metric">
+                                            <span class="metric-label">24h Change</span>
+                                            <span class="metric-value" id="researchChange"></span>
+                                        </div>
+                                        <div class="key-metric">
+                                            <span class="metric-label">Market Cap</span>
+                                            <span class="metric-value" id="researchMarketCap"></span>
+                                        </div>
+                                        <div class="key-metric">
+                                            <span class="metric-label">Volume 24h</span>
+                                            <span class="metric-value" id="researchVolume"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="project-section">
+                                    <h3>Trading Exchanges</h3>
+                                    <div class="exchanges-list" id="exchangesList"></div>
+                                </div>
+                                <div class="project-section">
+                                    <h3>Recent News & Analysis</h3>
+                                    <p id="recentNews"></p>
+                                </div>
+                                <div class="project-section">
+                                    <h3>Sentiment Analysis</h3>
+                                    <div class="sentiment-indicator">
+                                        <span class="sentiment-label">Community Sentiment</span>
+                                        <span class="sentiment-value" id="sentimentValue">Neutral</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts Tab -->
+            <section class="tab-content" id="alerts">
+                <div class="alerts-grid">
+                    <div class="card alerts-management">
+                        <div class="card__header">
+                            <h2>Alert Management</h2>
+                            <button class="btn btn--primary btn--sm" id="createAlertBtn">Create Alert</button>
+                        </div>
+                        <div class="card__body">
+                            <div class="alerts-list" id="alertsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Alert Notifications -->
+        <div class="alert-notifications" id="alertNotifications"></div>
+
+        <!-- Modals -->
+        <!-- Add Holding Modal -->
+        <div class="modal hidden" id="addHoldingModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Portfolio Holding</h3>
+                    <button class="modal-close" id="closeHoldingModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Crypto Symbol</label>
+                        <select class="form-control" id="holdingSymbol">
+                            <option value="BTC">Bitcoin (BTC)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="ADA">Cardano (ADA)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Average Buy Price ($)</label>
+                        <input type="number" class="form-control" id="avgBuyPrice" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Allocation (%)</label>
+                        <input type="number" class="form-control" id="allocation" min="1" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Holding Time</label>
+                        <input type="text" class="form-control" id="holdingTime" placeholder="e.g., 6 months">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target Price ($)</label>
+                        <input type="number" class="form-control" id="targetPrice" step="0.01">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="cancelHolding">Cancel</button>
+                    <button class="btn btn--primary" id="saveHolding">Add Holding</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Alert Modal -->
+        <div class="modal hidden" id="createAlertModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Create Price Alert</h3>
+                    <button class="modal-close" id="closeAlertModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Crypto Symbol</label>
+                        <select class="form-control" id="alertSymbol">
+                            <option value="BTC">Bitcoin (BTC)</option>
+                            <option value="ETH">Ethereum (ETH)</option>
+                            <option value="ADA">Cardano (ADA)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alert Type</label>
+                        <select class="form-control" id="alertType">
+                            <option value="price">Price Alert</option>
+                            <option value="volume">Volume Spike</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Condition</label>
+                        <select class="form-control" id="alertCondition">
+                            <option value="above">Above</option>
+                            <option value="below">Below</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Target Value</label>
+                        <input type="number" class="form-control" id="alertValue" step="0.01">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--secondary" id="cancelAlert">Cancel</button>
+                    <button class="btn btn--primary" id="saveAlert">Create Alert</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
